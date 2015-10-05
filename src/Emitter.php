@@ -9,7 +9,7 @@ class Emitter
     
     protected $_remotePort = 2206;
     
-    protected $_key = 'socket.io#emitter';
+    protected $_key = 'socket.io#/#';
     
     protected $_client = null;
     
@@ -17,6 +17,7 @@ class Emitter
     {
         $this->_remoteIp = $ip;
         $this->_remotePort = $port;
+        $this->connect();
     }
     
     protected function connect()
@@ -40,9 +41,9 @@ class Emitter
     
     public function to($name)
     {
-        if(!isset($this->rooms[$name]))
+        if(!isset($this->_rooms[$name]))
         {
-            $this->rooms[$name] = $name;
+            $this->_rooms[$name] = $name;
         }
         return $this;
     }
@@ -64,18 +65,18 @@ class Emitter
         $parserType = 2;// Parser::EVENT
 
         $packet = array('type'=> $parserType, 'data'=> $args, 'nsp'=>'/' );
-        
+         
         $buffer = serialize(array(
                 'type' => 'publish', 
                 'channels'=>array($this->_key), 
-                'data' => array($packet, 
+                'data' => array('-', $packet, 
                         array(
                                 'rooms' => $this->_rooms,
                                 'flags' => $this->_flags
                                 )
                         )
                 )
-        );
+        )."\n";
         
         fwrite($this->_client, $buffer);
 
