@@ -2,7 +2,12 @@
 class Emitter
 {
     protected $_rooms = array();
+    
     protected $_flags = array();
+    
+    protected $_remoteIp = '';
+    
+    protected $_remotePort = 2206;
     
     protected $_key = 'socket.io#emitter';
     
@@ -10,7 +15,13 @@ class Emitter
     
     public function __construct($ip = '127.0.0.1', $port = 2206)
     {
-        $this->_client = stream_socket_client("tcp://$ip:$port", $errno, $errmsg, 4);
+        $this->_remoteIp = $ip;
+        $this->_remotePort = $port;
+    }
+    
+    protected function connect()
+    {
+        $this->_client = stream_socket_client("tcp://{$this->_remoteIp}:{$this->_remotePort}", $errno, $errmsg, 3);
         if(!$this->_client)
         {
             throw new \Exception($errmsg);
@@ -43,6 +54,11 @@ class Emitter
     
     public function emit($ev)
     {
+        if(feof($this->_client))
+        {
+            $this->connect();
+        }
+        
         $args = func_get_args();
     
         $parserType = 2;// Parser::EVENT
@@ -60,6 +76,8 @@ class Emitter
                         )
                 )
         );
+        
+        fwrite($this->_client, $buffer);
 
         $this->_rooms = array();
         $this->_flags = array();;
