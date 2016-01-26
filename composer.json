@@ -1,0 +1,9 @@
+{
+    "name"  : "workerman/phpsocket.io-emitter",
+    "type"  : "project",
+    "homepage": "http://www.workerman.net",
+    "license" : "MIT",
+    "autoload": {
+        "psr-4": {"": "./src"}
+    }
+}
