@@ -3,7 +3,7 @@
 ## Install
 composer require workerman/phpsocket.io-emitter
 
-##　example
+## example
 ```php
 $emitter = new Emitter();
 $emitter->in('one room')->emit('newmsg', 'hello');
