@@ -76,7 +76,9 @@ class Emitter
                                 )
                         )
                 )
-        )."\n";
+        );
+        
+        $buffer = pack('N', strlen($buffer)+4).$buffer;
         
         fwrite($this->_client, $buffer);
 
