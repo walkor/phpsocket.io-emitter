@@ -1,5 +1,8 @@
 # phpsocket.io-emitter
 
+## Install
+composer require workerman/phpsocket.io-emitter
+
 ##　example
 ```php
 $emitter = new Emitter();
