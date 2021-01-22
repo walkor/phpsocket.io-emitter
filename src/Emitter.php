@@ -13,16 +13,26 @@ class Emitter
     
     protected $_client = null;
     
-    public function __construct($ip = '127.0.0.1', $port = 2206)
+    protected $_context = null;
+
+    public function __construct($ip = '127.0.0.1', $port = 2206, $context = null)
     {
         $this->_remoteIp = $ip;
         $this->_remotePort = $port;
+        $this->_context = $context;
         $this->connect();
     }
     
     protected function connect()
     {
-        $this->_client = stream_socket_client("tcp://{$this->_remoteIp}:{$this->_remotePort}", $errno, $errmsg, 3);
+        if(is_array($this->_context))
+        {
+            $context = stream_context_create($this->_context);
+            $this->_client = stream_socket_client("tcp://{$this->_remoteIp}:{$this->_remotePort}", $errno, $errmsg, 3, STREAM_CLIENT_CONNECT, $context);
+        }else{
+            $this->_client = stream_socket_client("tcp://{$this->_remoteIp}:{$this->_remotePort}", $errno, $errmsg, 3);
+        }
+
         if(!$this->_client)
         {
             throw new \Exception($errmsg);
@@ -83,7 +93,7 @@ class Emitter
         fwrite($this->_client, $buffer);
 
         $this->_rooms = array();
-        $this->_flags = array();;
+        $this->_flags = array();
         return $this;
     }
 }
